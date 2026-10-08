@@ -14,8 +14,8 @@ class Spoon {
         return num;
     }
 
-    void take(){
-        semaphore.acquireUninterruptibly();
+    void take() throws InterruptedException {
+        semaphore.acquire();
     }
 
     void put(){

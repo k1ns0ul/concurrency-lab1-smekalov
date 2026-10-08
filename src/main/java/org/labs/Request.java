@@ -11,8 +11,8 @@ class Request {
         this.res.release();
     }
 
-    boolean getResponse(){
-        res.acquireUninterruptibly();
+    boolean getResponse() throws InterruptedException {
+        res.acquire();
         return isFoodAvailable;
     }
 }

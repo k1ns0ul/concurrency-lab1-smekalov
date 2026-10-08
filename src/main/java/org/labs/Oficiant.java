@@ -15,18 +15,23 @@ class Oficiant implements Runnable {
     }
 
     public void run(){
-        while(true){
-            Request request = stage.getRequest();
+        try {
+            while(true){
+                Request request = stage.getRequest();
 
-            if(request == null){
-                return;
-            }
+                if(request == null){
+                    return;
+                }
 
-            boolean res = kitchen.getOneFood();
-            if(res){
-                deliveredCount++;
+                boolean res = kitchen.getOneFood();
+                if(res){
+                    deliveredCount++;
+                }
+                request.sendResponse(res);
             }
-            request.sendResponse(res);
+        } catch (InterruptedException e) {
+            stage.cancel(e);
+            Thread.currentThread().interrupt();
         }
     }
 }

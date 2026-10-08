@@ -3,8 +3,11 @@ package org.labs;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -68,5 +71,24 @@ class DiningSimulationTest {
         assertThrows(IllegalArgumentException.class, () -> simulation.run(1, 10, 2));
         assertThrows(IllegalArgumentException.class, () -> simulation.run(7, 6, 2));
         assertThrows(IllegalArgumentException.class, () -> simulation.run(7, 10, 0));
+    }
+
+    @Test
+    void stopsWorkersWhenSimulationIsInterrupted() throws InterruptedException {
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        Thread simulation = new Thread(() -> {
+            Thread.currentThread().interrupt();
+            try {
+                new DiningSimulation().run(7, 1000000, 2);
+            } catch (InterruptedException e) {
+                failure.set(e);
+            }
+        });
+        simulation.setDaemon(true);
+        simulation.start();
+        simulation.join(5000);
+
+        assertFalse(simulation.isAlive());
+        assertInstanceOf(InterruptedException.class, failure.get());
     }
 }

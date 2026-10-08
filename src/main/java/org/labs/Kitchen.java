@@ -11,8 +11,8 @@ class Kitchen {
         this.kitSem = kitSem;
     }
 
-    boolean getOneFood(){
-        kitSem.acquireUninterruptibly();
+    boolean getOneFood() throws InterruptedException {
+        kitSem.acquire();
         try {
             if(f > 0){
                 f--;
@@ -25,8 +25,8 @@ class Kitchen {
         }
     }
 
-    int getFoodCount(){
-        kitSem.acquireUninterruptibly();
+    int getFoodCount() throws InterruptedException {
+        kitSem.acquire();
         try {
             return f;
         } finally {

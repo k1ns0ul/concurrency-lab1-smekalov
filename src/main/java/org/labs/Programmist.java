@@ -17,14 +17,14 @@ class Programmist implements Runnable {
         this.room = room;
     }
 
-    private boolean getFood(){
+    private boolean getFood() throws InterruptedException {
         Request request = new Request();
         stage.putRequest(request);
         return request.getResponse();
     }
 
-    private void eat(){
-        room.acquireUninterruptibly();
+    private void eat() throws InterruptedException {
+        room.acquire();
         try {
             spoonLeft.take();
             try {
@@ -55,13 +55,18 @@ class Programmist implements Runnable {
     }
 
     public void run(){
-        while(true){
-            eat();
-            discussTeachers();
+        try {
+            while(true){
+                eat();
+                discussTeachers();
 
-            if(!getFood()){
-                return;
+                if(!getFood()){
+                    return;
+                }
             }
+        } catch (InterruptedException e) {
+            stage.cancel(e);
+            Thread.currentThread().interrupt();
         }
     }
 }
