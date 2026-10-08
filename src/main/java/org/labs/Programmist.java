@@ -7,20 +7,20 @@ class Programmist implements Runnable {
     private final Spoon spoonRight;
     private final Stage stage;
     private final Semaphore room;
-    private final int portionQuota;
+    private final int num;
     private int eatenCount;
     private int discussionCount;
 
-    Programmist(Spoon spoonLeft, Spoon spoonRight, Stage stage, Semaphore room, int portionQuota){
+    Programmist(int num, Spoon spoonLeft, Spoon spoonRight, Stage stage, Semaphore room){
+        this.num = num;
         this.spoonLeft = spoonLeft;
         this.spoonRight = spoonRight;
         this.stage = stage;
         this.room = room;
-        this.portionQuota = portionQuota;
     }
 
     private boolean getFood(){
-        Request request = new Request();
+        Request request = new Request(num);
         stage.putRequest(request);
         return request.getResponse();
     }
@@ -57,15 +57,12 @@ class Programmist implements Runnable {
     }
 
     public void run(){
-        for(int i = 0; i < portionQuota; i++){
-            if(i > 0 && !getFood()){
-                return;
-            }
-
+        while(true){
             eat();
+            discussTeachers();
 
-            if(i + 1 < portionQuota){
-                discussTeachers();
+            if(!getFood()){
+                return;
             }
         }
     }

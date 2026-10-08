@@ -7,6 +7,7 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DiningSimulationTest {
     @Test
@@ -17,15 +18,19 @@ class DiningSimulationTest {
         );
 
         assertEquals(7001, result.getEaten());
-        assertEquals(6994, result.getDiscussions());
+        assertEquals(7001, result.getDiscussions());
         assertEquals(6994, result.getDelivered());
         assertEquals(0, result.getRemaining());
-        assertEquals(1001, result.getEatenBy(0));
 
-        for(int i = 1; i < 7; i++){
-            assertEquals(1000, result.getEatenBy(i));
+        int extra = 0;
+        for(int i = 0; i < 7; i++){
+            int count = result.getEatenBy(i);
+            assertTrue(count == 1000 || count == 1001);
+            if(count == 1001){
+                extra++;
+            }
         }
-
+        assertEquals(1, extra);
     }
 
     @Test
@@ -36,7 +41,7 @@ class DiningSimulationTest {
         );
 
         assertEquals(7, result.getEaten());
-        assertEquals(0, result.getDiscussions());
+        assertEquals(7, result.getDiscussions());
         assertEquals(0, result.getDelivered());
     }
 
@@ -47,8 +52,9 @@ class DiningSimulationTest {
                 () -> new DiningSimulation().run(2, 101, 1)
         );
 
-        assertEquals(51, result.getEatenBy(0));
-        assertEquals(50, result.getEatenBy(1));
+        assertEquals(101, result.getEaten());
+        assertEquals(101, result.getDiscussions());
+        assertEquals(1, Math.abs(result.getEatenBy(0) - result.getEatenBy(1)));
         assertEquals(99, result.getDelivered());
         assertEquals(0, result.getRemaining());
     }

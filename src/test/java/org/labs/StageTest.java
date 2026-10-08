@@ -15,21 +15,35 @@ class StageTest {
     @Test
     void givesEachRequestItsOwnResponseAndClosesWaitingOficiants(){
         assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
-            Stage stage = new Stage(new Semaphore(0), 2);
-            Request first = new Request();
-            Request second = new Request();
+            Stage stage = new Stage(new Semaphore(0), 3, 4, 2);
+            Request first = new Request(0);
+            Request fast = new Request(0);
+            Request second = new Request(1);
+            Request third = new Request(2);
+            Request noFood = new Request(1);
 
             stage.putRequest(first);
-            stage.putRequest(second);
-
             assertSame(first, stage.getRequest());
-            assertSame(second, stage.getRequest());
+            assertTrue(first.isReserved());
 
-            second.sendResponse(false);
+            stage.putRequest(fast);
+            stage.putRequest(second);
+            stage.putRequest(third);
+
+            assertSame(second, stage.getRequest());
+            assertSame(third, stage.getRequest());
+            assertSame(fast, stage.getRequest());
+            assertTrue(fast.isReserved());
+
+            stage.putRequest(noFood);
+            assertSame(noFood, stage.getRequest());
+            assertFalse(noFood.isReserved());
+
             first.sendResponse(true);
+            noFood.sendResponse(false);
 
             assertTrue(first.getResponse());
-            assertFalse(second.getResponse());
+            assertFalse(noFood.getResponse());
 
             stage.close();
 

@@ -22,7 +22,7 @@ class Oficiant implements Runnable {
                 return;
             }
 
-            boolean res = kitchen.getOneFood();
+            boolean res = request.isReserved() && kitchen.getOneFood();
             if(res){
                 deliveredCount++;
             }
