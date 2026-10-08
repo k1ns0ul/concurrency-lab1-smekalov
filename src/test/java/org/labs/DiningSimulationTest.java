@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DiningSimulationTest {
     @Test
-    void distributesAllPortionsAlmostEqually(){
+    void consumesAllPortionsThroughSharedKitchen(){
         SimulationResult result = assertTimeoutPreemptively(
                 Duration.ofSeconds(15),
                 () -> new DiningSimulation().run(7, 7001, 2)
@@ -22,15 +22,13 @@ class DiningSimulationTest {
         assertEquals(6994, result.getDelivered());
         assertEquals(0, result.getRemaining());
 
-        int extra = 0;
+        int sum = 0;
         for(int i = 0; i < 7; i++){
             int count = result.getEatenBy(i);
-            assertTrue(count == 1000 || count == 1001);
-            if(count == 1001){
-                extra++;
-            }
+            assertTrue(count >= 1);
+            sum += count;
         }
-        assertEquals(1, extra);
+        assertEquals(7001, sum);
     }
 
     @Test
@@ -43,6 +41,9 @@ class DiningSimulationTest {
         assertEquals(7, result.getEaten());
         assertEquals(7, result.getDiscussions());
         assertEquals(0, result.getDelivered());
+        for(int i = 0; i < 7; i++){
+            assertEquals(1, result.getEatenBy(i));
+        }
     }
 
     @Test
@@ -54,7 +55,8 @@ class DiningSimulationTest {
 
         assertEquals(101, result.getEaten());
         assertEquals(101, result.getDiscussions());
-        assertEquals(1, Math.abs(result.getEatenBy(0) - result.getEatenBy(1)));
+        assertTrue(result.getEatenBy(0) >= 1);
+        assertTrue(result.getEatenBy(1) >= 1);
         assertEquals(99, result.getDelivered());
         assertEquals(0, result.getRemaining());
     }

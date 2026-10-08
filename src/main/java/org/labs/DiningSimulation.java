@@ -17,7 +17,7 @@ public class DiningSimulation {
         Kitchen kitchen = new Kitchen(f - n, kitSem);
         Semaphore room = new Semaphore(n - 1, true);
         Semaphore stageReq = new Semaphore(0, true);
-        Stage stage = new Stage(stageReq, n, f - n, w);
+        Stage stage = new Stage(stageReq, w);
 
         Thread[] p = new Thread[n];
         Thread[] o = new Thread[w];
@@ -33,7 +33,7 @@ public class DiningSimulation {
         for(int i = 0; i < p.length; i++){
             Spoon spoonLeft = spoon[i];
             Spoon spoonRight = spoon[(i + 1) % n];
-            programmists[i] = new Programmist(i, spoonLeft, spoonRight, stage, room);
+            programmists[i] = new Programmist(spoonLeft, spoonRight, stage, room);
             p[i] = new Thread(programmists[i], "programmist-" + i);
             p[i].start();
         }

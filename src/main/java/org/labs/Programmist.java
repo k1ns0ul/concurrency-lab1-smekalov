@@ -7,12 +7,10 @@ class Programmist implements Runnable {
     private final Spoon spoonRight;
     private final Stage stage;
     private final Semaphore room;
-    private final int num;
     private int eatenCount;
     private int discussionCount;
 
-    Programmist(int num, Spoon spoonLeft, Spoon spoonRight, Stage stage, Semaphore room){
-        this.num = num;
+    Programmist(Spoon spoonLeft, Spoon spoonRight, Stage stage, Semaphore room){
         this.spoonLeft = spoonLeft;
         this.spoonRight = spoonRight;
         this.stage = stage;
@@ -20,7 +18,7 @@ class Programmist implements Runnable {
     }
 
     private boolean getFood(){
-        Request request = new Request(num);
+        Request request = new Request();
         stage.putRequest(request);
         return request.getResponse();
     }
